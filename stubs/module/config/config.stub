@@ -1,0 +1,10 @@
+<?php
+
+return [
+    'name' => '{{ module }}',
+
+    'providers' => [
+        {{ provider_class }}::class,
+    ],
+];
+

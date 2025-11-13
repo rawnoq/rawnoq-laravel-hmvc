@@ -1,0 +1,15 @@
+<?php
+
+namespace {{ namespace }}\{{ module }}\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class {{ controller }} extends Controller
+{
+    public function __invoke(Request $request)
+    {
+        //
+    }
+}
+

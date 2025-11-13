@@ -1,0 +1,72 @@
+<?php
+
+return [
+    'namespace' => 'Modules',
+
+    'modules_path' => base_path('modules'),
+
+    'status_file' => storage_path('app/hmvc/modules.php'),
+
+    'directories' => [
+        'controllers' => ['App/Http/Controllers'],
+        'models' => ['App/Models'],
+        'requests' => ['App/Http/Requests'],
+        'migrations' => ['Database/Migrations'],
+        'views' => ['Resources/Views'],
+        'seeders' => ['Database/Seeders'],
+        'factories' => ['Database/Factories'],
+        'config' => ['Config'],
+        'lang' => ['Lang'],
+        'routes' => ['Routes'],
+        'providers' => ['App/Providers'],
+        'policies' => ['App/Policies'],
+        'middleware' => ['App/Http/Middleware'],
+        'commands' => ['App/Console/Commands'],
+        'events' => ['App/Events'],
+        'listeners' => ['App/Listeners'],
+        'observers' => ['App/Observers'],
+        'resources' => ['App/Http/Resources'],
+        'tests' => ['Tests'],
+        'notifications' => ['App/Notifications'],
+        'mail' => ['App/Mail'],
+        'jobs' => ['App/Jobs'],
+        'exceptions' => ['App/Exceptions'],
+        'rules' => ['App/Rules'],
+        'casts' => ['App/Casts'],
+        'channels' => ['App/Broadcasting'],
+        'components' => ['App/View/Components'],
+        'enums' => ['App/Enums'],
+        'scopes' => ['App/Models/Scopes'],
+        'classes' => [],
+        'interfaces' => ['App/Contracts', 'App/Interfaces'],
+        'traits' => ['App/Concerns', 'App/Traits'],
+        'job-middleware' => ['App/Jobs/Middleware'],
+    ],
+
+    'routes' => [
+        [
+            'name' => 'web',
+            'path' => 'Routes/web.php',
+            'stub' => 'routes/web.stub',
+            'middleware' => ['web'],
+            'prefix' => null,
+            'namespace' => null,
+            'enabled' => true,
+            'make' => true,
+        ],
+        [
+            'name' => 'api',
+            'path' => 'Routes/api.php',
+            'stub' => 'routes/api.stub',
+            'middleware' => ['api'],
+            'prefix' => 'api',
+            'namespace' => null,
+            'enabled' => true,
+            'make' => true,
+        ],
+    ],
+
+    'stubs' => [
+        'path' => realpath(__DIR__.'/../stubs/module') ?: __DIR__.'/../stubs/module',
+    ],
+];
