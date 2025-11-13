@@ -8,11 +8,11 @@ use Rawnoq\LaravelHMVC\Support\ModuleManager;
 
 class ModuleSeedCommand extends Command
 {
-    protected $signature = 'module:seed {name : The module name}'
+    protected $signature = 'module:seed {name? : The module name (optional, seeds all modules if not provided)}'
         .' {--class= : The seeder class to run}'
         .' {--force : Force the operation to run when in production}';
 
-    protected $description = 'Run the database seeder for a specific HMVC module';
+    protected $description = 'Run the database seeder for HMVC module(s)';
 
     public function __construct(protected ModuleManager $manager)
     {
@@ -21,10 +21,62 @@ class ModuleSeedCommand extends Command
 
     public function handle(): int
     {
-        $name = Str::studly($this->argument('name'));
+        $name = $this->argument('name');
 
+        if ($name) {
+            return $this->seedModule(Str::studly($name));
+        }
+
+        // Seed all enabled modules
+        $modules = $this->manager->enabled();
+        $modulesCount = $modules->count();
+
+        if ($modulesCount === 0) {
+            $this->warn('No enabled modules found.');
+
+            return self::SUCCESS;
+        }
+
+        $this->info("Seeding {$modulesCount} module(s)...");
+
+        $successCount = 0;
+        $failureCount = 0;
+
+        foreach ($modules as $module) {
+            $moduleName = $module['name'] ?? null;
+
+            if (! $moduleName) {
+                continue;
+            }
+
+            $this->line("Seeding module: <comment>{$moduleName}</comment>");
+
+            $result = $this->seedModule($moduleName);
+
+            if ($result === self::SUCCESS) {
+                $successCount++;
+            } else {
+                $failureCount++;
+            }
+        }
+
+        $this->newLine();
+
+        if ($failureCount > 0) {
+            $this->warn("Completed: {$successCount} succeeded, {$failureCount} failed.");
+
+            return self::FAILURE;
+        }
+
+        $this->info("Successfully seeded {$successCount} module(s).");
+
+        return self::SUCCESS;
+    }
+
+    protected function seedModule(string $name): int
+    {
         if (! $this->manager->moduleExists($name)) {
-            $this->error("Module [$name] does not exist.");
+            $this->error("Module [{$name}] does not exist.");
 
             return self::FAILURE;
         }
@@ -32,7 +84,7 @@ class ModuleSeedCommand extends Command
         $class = $this->option('class') ?: $this->resolveDefaultSeeder($name);
 
         if (! class_exists($class)) {
-            $this->error("Seeder class [$class] could not be found.");
+            $this->error("Seeder class [{$class}] could not be found.");
 
             return self::FAILURE;
         }
