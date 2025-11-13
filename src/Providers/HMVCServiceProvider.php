@@ -32,11 +32,13 @@ use Rawnoq\LaravelHMVC\Console\MakeModuleNotificationCommand;
 use Rawnoq\LaravelHMVC\Console\MakeModuleObserverCommand;
 use Rawnoq\LaravelHMVC\Console\MakeModulePolicyCommand;
 use Rawnoq\LaravelHMVC\Console\MakeModuleProviderCommand;
+use Rawnoq\LaravelHMVC\Console\MakeModuleRepositoryCommand;
 use Rawnoq\LaravelHMVC\Console\MakeModuleRequestCommand;
 use Rawnoq\LaravelHMVC\Console\MakeModuleResourceCommand;
 use Rawnoq\LaravelHMVC\Console\MakeModuleRuleCommand;
 use Rawnoq\LaravelHMVC\Console\MakeModuleScopeCommand;
 use Rawnoq\LaravelHMVC\Console\MakeModuleSeederCommand;
+use Rawnoq\LaravelHMVC\Console\MakeModuleServiceCommand;
 use Rawnoq\LaravelHMVC\Console\MakeModuleTestCommand;
 use Rawnoq\LaravelHMVC\Console\MakeModuleTraitCommand;
 use Rawnoq\LaravelHMVC\Console\MakeModuleViewCommand;
@@ -102,6 +104,8 @@ class HMVCServiceProvider extends ServiceProvider
                 MakeModuleConfigCommand::class,
                 MakeModuleProviderCommand::class,
                 MakeModuleJobMiddlewareCommand::class,
+                MakeModuleServiceCommand::class,
+                MakeModuleRepositoryCommand::class,
             ]);
         }
 
@@ -133,7 +137,7 @@ class HMVCServiceProvider extends ServiceProvider
 
         // Normalize path for cross-platform compatibility (Linux/Windows)
         $normalizedPath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $modulesPath);
-        
+
         // Ensure the path ends with directory separator
         if (! str_ends_with($normalizedPath, DIRECTORY_SEPARATOR)) {
             $normalizedPath .= DIRECTORY_SEPARATOR;

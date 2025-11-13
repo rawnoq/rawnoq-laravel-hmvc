@@ -1,6 +1,6 @@
 {
     "name": "rawnoq/laravel-hmvc",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "A professional Laravel package for Hierarchical Model-View-Controller (HMVC) architecture with complete modular structure support",
     "type": "library",
     "license": "MIT",

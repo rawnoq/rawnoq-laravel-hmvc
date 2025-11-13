@@ -28,9 +28,15 @@ trait ResolvesModules
         return $this->moduleManager()->moduleExists($module);
     }
 
-    protected function moduleRootNamespace(string $module): string
+    protected function moduleRootNamespace(string $module, bool $includeAppSegment = true): string
     {
-        return $this->moduleManager()->namespace().'\\'.$module.'\\App\\';
+        $namespace = $this->moduleManager()->namespace().'\\'.$module.'\\';
+
+        if ($includeAppSegment) {
+            $namespace .= 'App\\';
+        }
+
+        return $namespace;
     }
 
     protected function moduleBasePath(string $module): string

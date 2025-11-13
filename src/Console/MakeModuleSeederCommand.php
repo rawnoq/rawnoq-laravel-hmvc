@@ -47,7 +47,7 @@ class MakeModuleSeederCommand extends SeederMakeCommand
     protected function rootNamespace()
     {
         if ($this->moduleName) {
-            return $this->moduleRootNamespace($this->moduleName).'Database\\Seeders\\';
+            return $this->moduleRootNamespace($this->moduleName, false).'Database\\Seeders\\';
         }
 
         return parent::rootNamespace();

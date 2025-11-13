@@ -47,7 +47,7 @@ class MakeModuleFactoryCommand extends FactoryMakeCommand
     protected function rootNamespace()
     {
         if ($this->moduleName) {
-            return $this->moduleRootNamespace($this->moduleName);
+            return $this->moduleRootNamespace($this->moduleName, false);
         }
 
         return parent::rootNamespace();
@@ -67,7 +67,7 @@ class MakeModuleFactoryCommand extends FactoryMakeCommand
         $class = parent::buildClass($name);
 
         if ($this->moduleName) {
-            $namespace = rtrim($this->moduleRootNamespace($this->moduleName), '\\').'\\Database\\Factories';
+            $namespace = rtrim($this->moduleRootNamespace($this->moduleName, false), '\\').'\\Database\\Factories';
             $class = preg_replace('/^namespace\s+[^;]+;/m', 'namespace '.$namespace.';', $class);
         }
 

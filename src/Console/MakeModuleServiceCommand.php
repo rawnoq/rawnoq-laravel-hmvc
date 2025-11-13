@@ -2,18 +2,32 @@
 
 namespace Rawnoq\LaravelHMVC\Console;
 
-use Illuminate\Foundation\Console\TestMakeCommand;
+use Illuminate\Foundation\Console\ClassMakeCommand;
 use Illuminate\Support\Str;
 use Rawnoq\LaravelHMVC\Console\Concerns\ResolvesModules;
 use Symfony\Component\Console\Input\InputOption;
 
-class MakeModuleTestCommand extends TestMakeCommand
+class MakeModuleServiceCommand extends ClassMakeCommand
 {
     use ResolvesModules;
 
+    /**
+     * The console command name.
+     *
+     * @var string
+     */
+    protected $name = 'make:service';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Create a new service class';
+
     protected ?string $moduleName = null;
 
-    public function handle()
+    public function handle(): int
     {
         $moduleOption = $this->option('module');
 
@@ -35,30 +49,26 @@ class MakeModuleTestCommand extends TestMakeCommand
         return is_int($result) ? $result : self::SUCCESS;
     }
 
+    protected function getDefaultNamespace($rootNamespace)
+    {
+        return rtrim($rootNamespace, '\\').'\\Services';
+    }
+
     protected function rootNamespace()
     {
         if ($this->moduleName) {
-            return $this->moduleRootNamespace($this->moduleName, false);
+            return $this->moduleRootNamespace($this->moduleName);
         }
 
         return parent::rootNamespace();
-    }
-
-    protected function getDefaultNamespace($rootNamespace)
-    {
-        if ($this->moduleName) {
-            return rtrim($rootNamespace, '\\').'\\Tests';
-        }
-
-        return parent::getDefaultNamespace($rootNamespace);
     }
 
     protected function getPath($name)
     {
         if ($this->moduleName) {
             $parentPath = parent::getPath($name);
-            $testsPath = base_path('tests').DIRECTORY_SEPARATOR;
-            $relative = Str::after($parentPath, $testsPath);
+            $appPath = base_path('app').DIRECTORY_SEPARATOR;
+            $relative = Str::after($parentPath, $appPath);
 
             if ($relative === $parentPath) {
                 $relative = basename($parentPath);
@@ -66,7 +76,11 @@ class MakeModuleTestCommand extends TestMakeCommand
 
             $relative = ltrim($relative, DIRECTORY_SEPARATOR);
 
-            $primary = str_replace('/', DIRECTORY_SEPARATOR, $this->modulePrimaryDirectory($this->moduleName, 'tests', 'Tests'));
+            if (Str::startsWith($relative, 'Services'.DIRECTORY_SEPARATOR)) {
+                $relative = Str::after($relative, 'Services'.DIRECTORY_SEPARATOR);
+            }
+
+            $primary = str_replace('/', DIRECTORY_SEPARATOR, $this->modulePrimaryDirectory($this->moduleName, 'services', 'App/Services'));
 
             return $this->moduleBasePath($this->moduleName)
                 .DIRECTORY_SEPARATOR.$primary
@@ -79,7 +93,7 @@ class MakeModuleTestCommand extends TestMakeCommand
     protected function getOptions()
     {
         return array_merge(parent::getOptions(), [
-            ['module', null, InputOption::VALUE_OPTIONAL, 'The module to create the test in'],
+            ['module', null, InputOption::VALUE_OPTIONAL, 'The module to create the service in'],
         ]);
     }
 }
