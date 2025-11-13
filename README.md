@@ -56,6 +56,8 @@ All Laravel `make:` commands support the `--module` option:
 composer require rawnoq/laravel-hmvc
 ```
 
+The package will automatically register PSR-4 autoloading for your modules. **No manual configuration needed!**
+
 ### Step 2: Publish Configuration (Optional)
 
 ```bash
@@ -71,6 +73,10 @@ php artisan vendor:publish --tag=hmvc-stubs
 ```
 
 This will publish module stubs to `stubs/hmvc/module/` for customization.
+
+### ⚠️ Note on Autoloading
+
+The package automatically registers PSR-4 autoloading for the `Modules` namespace. You **do not need** to manually add it to your `composer.json`. The autoloading is registered programmatically and works on both **Linux** and **Windows** systems.
 
 ## 🎯 Quick Start
 
@@ -340,9 +346,9 @@ return [
 
     // Directory structure for modules
     'directories' => [
-        'controllers' => ['Http/Controllers'],
-        'models' => ['Models'],
-        'requests' => ['Http/Requests'],
+        'controllers' => ['App/Http/Controllers'],
+        'models' => ['App/Models'],
+        'requests' => ['App/Http/Requests'],
         // ... and more
     ],
 
@@ -372,8 +378,8 @@ You can customize the directory structure in `config/hmvc.php`:
 
 ```php
 'directories' => [
-    'controllers' => ['Http/Controllers', 'Controllers'],
-    'models' => ['Models', 'Entities'],
+    'controllers' => ['App/Http/Controllers', 'Controllers'],
+    'models' => ['App/Models', 'Entities'],
     // Add custom directories
 ],
 ```
@@ -412,7 +418,7 @@ class ServiceProvider extends ServiceProvider
 ```php
 <?php
 
-use Modules\Blog\Http\Controllers\BlogController;
+use Modules\Blog\App\Http\Controllers\BlogController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/blog', [BlogController::class, 'index']);
@@ -424,7 +430,7 @@ Route::get('/blog/{post}', [BlogController::class, 'show']);
 ```php
 <?php
 
-use Modules\Blog\Http\Controllers\BlogController;
+use Modules\Blog\App\Http\Controllers\BlogController;
 use Illuminate\Support\Facades\Route;
 
 Route::apiResource('posts', BlogController::class);

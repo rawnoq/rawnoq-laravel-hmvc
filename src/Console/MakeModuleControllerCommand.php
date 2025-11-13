@@ -44,7 +44,7 @@ class MakeModuleControllerCommand extends ControllerMakeCommand
     protected function rootNamespace()
     {
         if ($this->moduleName) {
-            return $this->moduleManager()->namespace().'\\'.$this->moduleName.'\\';
+            return $this->moduleRootNamespace($this->moduleName);
         }
 
         return parent::rootNamespace();
@@ -62,9 +62,25 @@ class MakeModuleControllerCommand extends ControllerMakeCommand
     protected function getPath($name)
     {
         if ($this->moduleName) {
-            $name = Str::replaceFirst($this->rootNamespace(), '', $name);
+            $parentPath = parent::getPath($name);
+            $appPath = app_path().DIRECTORY_SEPARATOR;
+            $relative = Str::after($parentPath, $appPath);
 
-            return $this->moduleManager()->modulePath($this->moduleName).'/'.str_replace('\\', '/', $name).'.php';
+            if ($relative === $parentPath) {
+                $relative = basename($parentPath);
+            }
+
+            $relative = ltrim($relative, DIRECTORY_SEPARATOR);
+
+            if (Str::startsWith($relative, 'Http'.DIRECTORY_SEPARATOR.'Controllers'.DIRECTORY_SEPARATOR)) {
+                $relative = Str::after($relative, 'Http'.DIRECTORY_SEPARATOR.'Controllers'.DIRECTORY_SEPARATOR);
+            }
+
+            $primary = str_replace('/', DIRECTORY_SEPARATOR, $this->modulePrimaryDirectory($this->moduleName, 'controllers', 'App/Http/Controllers'));
+
+            return $this->moduleBasePath($this->moduleName)
+                .DIRECTORY_SEPARATOR.$primary
+                .DIRECTORY_SEPARATOR.$relative;
         }
 
         return parent::getPath($name);

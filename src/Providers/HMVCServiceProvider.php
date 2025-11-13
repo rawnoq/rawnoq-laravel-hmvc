@@ -58,6 +58,8 @@ class HMVCServiceProvider extends ServiceProvider
             return new ModuleManager($app['config']->get('hmvc', []));
         });
 
+        $this->registerModuleAutoloading();
+
         $this->app->alias('migration.creator', MigrationCreator::class);
 
         if ($this->app->runningInConsole()) {
@@ -121,6 +123,25 @@ class HMVCServiceProvider extends ServiceProvider
         foreach ($modules->enabled() as $module) {
             $this->bootModule($modules, Arr::get($module, 'name'));
         }
+    }
+
+    protected function registerModuleAutoloading(): void
+    {
+        $modules = $this->app->make(ModuleManager::class);
+        $namespace = $modules->namespace();
+        $modulesPath = $modules->modulesPath();
+
+        // Normalize path for cross-platform compatibility (Linux/Windows)
+        $normalizedPath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $modulesPath);
+        
+        // Ensure the path ends with directory separator
+        if (! str_ends_with($normalizedPath, DIRECTORY_SEPARATOR)) {
+            $normalizedPath .= DIRECTORY_SEPARATOR;
+        }
+
+        // Register PSR-4 autoloading for modules
+        $loader = require base_path('vendor/autoload.php');
+        $loader->setPsr4($namespace.'\\', $normalizedPath);
     }
 
     protected function registerModuleProviders(ModuleManager $modules): void

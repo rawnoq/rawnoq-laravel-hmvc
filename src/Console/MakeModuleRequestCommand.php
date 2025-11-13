@@ -79,7 +79,7 @@ class MakeModuleRequestCommand extends RequestMakeCommand
                 $relative = Str::after($relative, 'Http'.DIRECTORY_SEPARATOR.'Requests'.DIRECTORY_SEPARATOR);
             }
 
-            $primary = str_replace('/', DIRECTORY_SEPARATOR, $this->modulePrimaryDirectory($this->moduleName, 'requests', 'Http/Requests'));
+            $primary = str_replace('/', DIRECTORY_SEPARATOR, $this->modulePrimaryDirectory($this->moduleName, 'requests', 'App/Http/Requests'));
 
             return $this->moduleBasePath($this->moduleName)
                 .DIRECTORY_SEPARATOR.$primary

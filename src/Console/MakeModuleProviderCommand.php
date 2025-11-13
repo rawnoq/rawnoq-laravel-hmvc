@@ -70,7 +70,7 @@ class MakeModuleProviderCommand extends ProviderMakeCommand
                 $relative = Str::after($relative, 'Providers'.DIRECTORY_SEPARATOR);
             }
 
-            $primary = str_replace('/', DIRECTORY_SEPARATOR, $this->modulePrimaryDirectory($this->moduleName, 'providers', 'Providers'));
+            $primary = str_replace('/', DIRECTORY_SEPARATOR, $this->modulePrimaryDirectory($this->moduleName, 'providers', 'App/Providers'));
 
             return $this->moduleBasePath($this->moduleName)
                 .DIRECTORY_SEPARATOR.$primary

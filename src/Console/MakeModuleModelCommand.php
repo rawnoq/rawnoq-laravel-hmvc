@@ -55,7 +55,7 @@ class MakeModuleModelCommand extends ModelMakeCommand
     {
         if ($this->moduleName) {
             $modulePath = $this->moduleBasePath($this->moduleName);
-            $modelsPath = $modulePath.'/Models';
+            $modelsPath = $modulePath.'/App/Models';
 
             return rtrim($rootNamespace, '\\').(is_dir($modelsPath) ? '\\Models' : '');
         }
@@ -80,7 +80,7 @@ class MakeModuleModelCommand extends ModelMakeCommand
                 $relative = Str::after($relative, 'Models'.DIRECTORY_SEPARATOR);
             }
 
-            $primary = str_replace('/', DIRECTORY_SEPARATOR, $this->modulePrimaryDirectory($this->moduleName, 'models', 'Models'));
+            $primary = str_replace('/', DIRECTORY_SEPARATOR, $this->modulePrimaryDirectory($this->moduleName, 'models', 'App/Models'));
 
             return $this->moduleBasePath($this->moduleName)
                 .DIRECTORY_SEPARATOR.$primary

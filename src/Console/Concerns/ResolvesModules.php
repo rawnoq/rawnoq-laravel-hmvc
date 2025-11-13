@@ -30,7 +30,7 @@ trait ResolvesModules
 
     protected function moduleRootNamespace(string $module): string
     {
-        return $this->moduleManager()->namespace().'\\'.$module.'\\';
+        return $this->moduleManager()->namespace().'\\'.$module.'\\App\\';
     }
 
     protected function moduleBasePath(string $module): string
