@@ -1,13 +1,13 @@
 <?php
 
-namespace Rawnoq\LaravelHMVC\Console;
+namespace Rawnoq\HMVC\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
-use Rawnoq\LaravelHMVC\Support\ModuleManager;
+use Rawnoq\HMVC\Support\ModuleManager;
 
 class ModuleMakeCommand extends Command
 {

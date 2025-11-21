@@ -1,6 +1,6 @@
 <?php
 
-namespace Rawnoq\LaravelHMVC\Support;
+namespace Rawnoq\HMVC\Support;
 
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Arr;

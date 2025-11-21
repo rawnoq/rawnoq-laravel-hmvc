@@ -1,10 +1,10 @@
 <?php
 
-namespace Rawnoq\LaravelHMVC\Console;
+namespace Rawnoq\HMVC\Console;
 
 use Illuminate\Foundation\Console\TraitMakeCommand;
 use Illuminate\Support\Str;
-use Rawnoq\LaravelHMVC\Console\Concerns\ResolvesModules;
+use Rawnoq\HMVC\Console\Concerns\ResolvesModules;
 use Symfony\Component\Console\Input\InputOption;
 
 class MakeModuleTraitCommand extends TraitMakeCommand
@@ -47,17 +47,21 @@ class MakeModuleTraitCommand extends TraitMakeCommand
     protected function getDefaultNamespace($rootNamespace)
     {
         if ($this->moduleName) {
-            $concernsPath = $this->moduleBasePath($this->moduleName).DIRECTORY_SEPARATOR.'Concerns';
-            $traitsPath = $this->moduleBasePath($this->moduleName).DIRECTORY_SEPARATOR.'Traits';
+            $traitsPath = $this->moduleBasePath($this->moduleName).DIRECTORY_SEPARATOR.'App'.DIRECTORY_SEPARATOR.'Traits';
 
             return match (true) {
-                is_dir($concernsPath) => rtrim($rootNamespace, '\\').'\\Concerns',
                 is_dir($traitsPath) => rtrim($rootNamespace, '\\').'\\Traits',
-                default => rtrim($rootNamespace, '\\'),
+                default => rtrim($rootNamespace, '\\').'\\Traits',
             };
         }
 
-        return parent::getDefaultNamespace($rootNamespace);
+        // Handle non-module case - check for app/Traits
+        $traitsPath = base_path('app').DIRECTORY_SEPARATOR.'Traits';
+
+        return match (true) {
+            is_dir($traitsPath) => rtrim($rootNamespace, '\\').'\\Traits',
+            default => rtrim($rootNamespace, '\\').'\\Traits',
+        };
     }
 
     protected function getPath($name)
@@ -73,25 +77,49 @@ class MakeModuleTraitCommand extends TraitMakeCommand
 
             $relative = ltrim($relative, DIRECTORY_SEPARATOR);
 
-            $concernsPath = $this->moduleBasePath($this->moduleName).DIRECTORY_SEPARATOR.'Concerns';
-            $traitsPath = $this->moduleBasePath($this->moduleName).DIRECTORY_SEPARATOR.'Traits';
+            // Remove Traits from the beginning of relative path if present
+            if (Str::startsWith($relative, 'Traits'.DIRECTORY_SEPARATOR)) {
+                $relative = Str::after($relative, 'Traits'.DIRECTORY_SEPARATOR);
+            }
+
+            $traitsPath = $this->moduleBasePath($this->moduleName).DIRECTORY_SEPARATOR.'App'.DIRECTORY_SEPARATOR.'Traits';
 
             $primary = match (true) {
-                is_dir($concernsPath) => str_replace('/', DIRECTORY_SEPARATOR, $this->modulePrimaryDirectory($this->moduleName, 'traits', 'Concerns')),
-                is_dir($traitsPath) => str_replace('/', DIRECTORY_SEPARATOR, $this->modulePrimaryDirectory($this->moduleName, 'traits', 'Traits')),
-                default => '',
+                is_dir($traitsPath) => 'App'.DIRECTORY_SEPARATOR.'Traits',
+                default => 'App'.DIRECTORY_SEPARATOR.'Traits',
             };
 
-            $path = $this->moduleBasePath($this->moduleName);
-            if ($primary) {
-                $path .= DIRECTORY_SEPARATOR.$primary;
-            }
-            $path .= DIRECTORY_SEPARATOR.str_replace('\\', DIRECTORY_SEPARATOR, $relative);
-
-            return $path;
+            return $this->moduleBasePath($this->moduleName)
+                .DIRECTORY_SEPARATOR.$primary
+                .DIRECTORY_SEPARATOR.$relative;
         }
 
-        return parent::getPath($name);
+        // Handle non-module case - check for app/Traits or app/Concerns
+        $parentPath = parent::getPath($name);
+        $appPath = base_path('app').DIRECTORY_SEPARATOR;
+        $relative = Str::after($parentPath, $appPath);
+
+        if ($relative === $parentPath) {
+            $relative = basename($parentPath);
+        }
+
+        $relative = ltrim($relative, DIRECTORY_SEPARATOR);
+
+        // Remove Traits from the beginning of relative path if present
+        if (Str::startsWith($relative, 'Traits'.DIRECTORY_SEPARATOR)) {
+            $relative = Str::after($relative, 'Traits'.DIRECTORY_SEPARATOR);
+        }
+
+        $traitsPath = base_path('app').DIRECTORY_SEPARATOR.'Traits';
+
+        $primary = match (true) {
+            is_dir($traitsPath) => 'Traits',
+            default => 'Traits',
+        };
+
+        return base_path('app')
+            .DIRECTORY_SEPARATOR.$primary
+            .DIRECTORY_SEPARATOR.$relative;
     }
 
     protected function getOptions()

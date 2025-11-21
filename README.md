@@ -41,7 +41,7 @@ All Laravel `make:` commands support the `--module` option:
 - Middleware, Commands, Events, Listeners, Observers
 - Resources, Tests, Notifications, Mail, Jobs, Exceptions
 - Rules, Casts, Channels, Components, Enums, Scopes
-- Views, Classes, Interfaces, Traits, Config, Providers, Job Middleware
+- Views, Classes, Interfaces, Traits, DTOs, Config, Providers, Job Middleware
 
 ## 📦 Requirements
 
@@ -273,6 +273,7 @@ php artisan make:scope PublishedScope --module=Blog
 php artisan make:class PostService --module=Blog
 php artisan make:interface PostRepositoryInterface --module=Blog
 php artisan make:trait HasSlug --module=Blog
+php artisan make:dto PostDto --module=Blog
 php artisan make:config post --module=Blog
 php artisan make:provider PostServiceProvider --module=Blog
 php artisan make:exception PostNotFoundException --module=Blog
@@ -312,8 +313,9 @@ modules/
     │   ├── Enums/                   # Enums
     │   ├── Console/
     │   │   └── Commands/            # Artisan commands
-    │   ├── Contracts/               # Interfaces/Contracts
-    │   └── Traits/                  # Traits
+    │   ├── Interfaces/              # Interfaces
+    │   ├── Traits/                  # Traits
+    │   └── DTOs/                    # Data Transfer Objects
     ├── Database/
     │   ├── Factories/               # Model factories
     │   ├── Migrations/              # Database migrations
@@ -541,6 +543,10 @@ php artisan make:class OrderService --module=Ecommerce
 # Create repositories
 php artisan make:interface ProductRepositoryInterface --module=Ecommerce
 php artisan make:class ProductRepository --module=Ecommerce
+
+# Create DTOs
+php artisan make:dto CreateProductDto --module=Ecommerce
+php artisan make:dto UpdateOrderDto --module=Ecommerce
 ```
 
 ## 🔧 Troubleshooting
@@ -587,11 +593,87 @@ Please see [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
 
 This package is open-sourced software licensed under the [MIT license](LICENSE).
 
+## 📦 Data Transfer Objects (DTOs)
+
+The package includes a powerful DTO system with a base class for type-safe data transfer:
+
+### Creating DTOs
+
+```bash
+# Create a DTO in app
+php artisan make:dto UserDto
+
+# Create a DTO in a module
+php artisan make:dto PostDto --module=Blog
+```
+
+### DTO Structure
+
+All DTOs extend `Rawnoq\HMVC\DTOs\BaseDto` which provides:
+
+- `fromArray(array $data): static` - Create DTO from array
+- `fromRequest(Request $request): static` - Create DTO from validated request
+- `toArray(): array` - Convert DTO to array
+
+### Example DTO
+
+```php
+<?php
+
+namespace Modules\Blog\App\DTOs;
+
+use Rawnoq\HMVC\DTOs\BaseDto;
+
+final readonly class PostDto extends BaseDto
+{
+    public function __construct(
+        public string $title,
+        public string $content,
+        public ?string $slug = null,
+    ) {}
+
+    public static function fromArray(array $data): static
+    {
+        return new static(
+            title: $data['title'],
+            content: $data['content'],
+            slug: $data['slug'] ?? null,
+        );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'title' => $this->title,
+            'content' => $this->content,
+            'slug' => $this->slug,
+        ];
+    }
+}
+```
+
+### Using DTOs
+
+```php
+// In a controller
+use Modules\Blog\App\DTOs\PostDto;
+
+public function store(StorePostRequest $request)
+{
+    $dto = PostDto::fromRequest($request);
+    
+    // Use DTO with type safety
+    $post = Post::create($dto->toArray());
+    
+    return response()->json($post);
+}
+```
+
 ## 🙏 Credits
 
 - **Author:** Rawnoq
 - **Package:** rawnoq/laravel-hmvc
-- **Version:** 1.0.0
+- **Version:** 1.0.3
 
 ## 📚 Additional Resources
 

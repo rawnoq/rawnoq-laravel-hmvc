@@ -1,6 +1,6 @@
 <?php
 
-namespace Rawnoq\LaravelHMVC\Providers;
+namespace Rawnoq\HMVC\Providers;
 
 use Illuminate\Database\Migrations\MigrationCreator;
 use Illuminate\Support\Arr;
@@ -8,47 +8,49 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
-use Rawnoq\LaravelHMVC\Console\MakeModuleCastCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleChannelCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleClassCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleCommandCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleComponentCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleConfigCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleControllerCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleEnumCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleEventCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleExceptionCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleFactoryCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleInterfaceCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleJobCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleJobMiddlewareCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleListenerCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleMailCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleMiddlewareCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleMigrationCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleModelCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleNotificationCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleObserverCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModulePolicyCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleProviderCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleRepositoryCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleRequestCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleResourceCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleRuleCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleScopeCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleSeederCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleServiceCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleTestCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleTraitCommand;
-use Rawnoq\LaravelHMVC\Console\MakeModuleViewCommand;
-use Rawnoq\LaravelHMVC\Console\ModuleDisableCommand;
-use Rawnoq\LaravelHMVC\Console\ModuleEnableCommand;
-use Rawnoq\LaravelHMVC\Console\ModuleListCommand;
-use Rawnoq\LaravelHMVC\Console\ModuleMakeCommand;
-use Rawnoq\LaravelHMVC\Console\ModuleMigrateCommand;
-use Rawnoq\LaravelHMVC\Console\ModuleSeedCommand;
-use Rawnoq\LaravelHMVC\Support\ModuleManager;
+use Rawnoq\HMVC\Console\DatabaseSeedCommand;
+use Rawnoq\HMVC\Console\MakeModuleActionCommand;
+use Rawnoq\HMVC\Console\MakeModuleCastCommand;
+use Rawnoq\HMVC\Console\MakeModuleChannelCommand;
+use Rawnoq\HMVC\Console\MakeModuleClassCommand;
+use Rawnoq\HMVC\Console\MakeModuleCommand;
+use Rawnoq\HMVC\Console\MakeModuleDtoCommand;
+use Rawnoq\HMVC\Console\MakeModuleCommandCommand;
+use Rawnoq\HMVC\Console\MakeModuleComponentCommand;
+use Rawnoq\HMVC\Console\MakeModuleConfigCommand;
+use Rawnoq\HMVC\Console\MakeModuleControllerCommand;
+use Rawnoq\HMVC\Console\MakeModuleEnumCommand;
+use Rawnoq\HMVC\Console\MakeModuleEventCommand;
+use Rawnoq\HMVC\Console\MakeModuleExceptionCommand;
+use Rawnoq\HMVC\Console\MakeModuleFactoryCommand;
+use Rawnoq\HMVC\Console\MakeModuleInterfaceCommand;
+use Rawnoq\HMVC\Console\MakeModuleJobCommand;
+use Rawnoq\HMVC\Console\MakeModuleJobMiddlewareCommand;
+use Rawnoq\HMVC\Console\MakeModuleListenerCommand;
+use Rawnoq\HMVC\Console\MakeModuleMailCommand;
+use Rawnoq\HMVC\Console\MakeModuleMiddlewareCommand;
+use Rawnoq\HMVC\Console\MakeModuleMigrationCommand;
+use Rawnoq\HMVC\Console\MakeModuleModelCommand;
+use Rawnoq\HMVC\Console\MakeModuleNotificationCommand;
+use Rawnoq\HMVC\Console\MakeModuleObserverCommand;
+use Rawnoq\HMVC\Console\MakeModulePolicyCommand;
+use Rawnoq\HMVC\Console\MakeModuleProviderCommand;
+use Rawnoq\HMVC\Console\MakeModuleRepositoryCommand;
+use Rawnoq\HMVC\Console\MakeModuleRequestCommand;
+use Rawnoq\HMVC\Console\MakeModuleResourceCommand;
+use Rawnoq\HMVC\Console\MakeModuleRuleCommand;
+use Rawnoq\HMVC\Console\MakeModuleScopeCommand;
+use Rawnoq\HMVC\Console\MakeModuleSeederCommand;
+use Rawnoq\HMVC\Console\MakeModuleServiceCommand;
+use Rawnoq\HMVC\Console\MakeModuleTestCommand;
+use Rawnoq\HMVC\Console\MakeModuleTraitCommand;
+use Rawnoq\HMVC\Console\MakeModuleViewCommand;
+use Rawnoq\HMVC\Console\ModuleDisableCommand;
+use Rawnoq\HMVC\Console\ModuleEnableCommand;
+use Rawnoq\HMVC\Console\ModuleListCommand;
+use Rawnoq\HMVC\Console\ModuleMakeCommand;
+
+use Rawnoq\HMVC\Support\ModuleManager;
 
 class HMVCServiceProvider extends ServiceProvider
 {
@@ -66,13 +68,14 @@ class HMVCServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands([
+                DatabaseSeedCommand::class,
                 ModuleMakeCommand::class,
                 MakeModuleCommand::class,
                 ModuleListCommand::class,
                 ModuleEnableCommand::class,
                 ModuleDisableCommand::class,
-                ModuleMigrateCommand::class,
-                ModuleSeedCommand::class,
+
+                MakeModuleActionCommand::class,
                 MakeModuleControllerCommand::class,
                 MakeModuleModelCommand::class,
                 MakeModuleRequestCommand::class,
@@ -101,6 +104,7 @@ class HMVCServiceProvider extends ServiceProvider
                 MakeModuleClassCommand::class,
                 MakeModuleInterfaceCommand::class,
                 MakeModuleTraitCommand::class,
+                MakeModuleDtoCommand::class,
                 MakeModuleConfigCommand::class,
                 MakeModuleProviderCommand::class,
                 MakeModuleJobMiddlewareCommand::class,
@@ -247,12 +251,20 @@ class HMVCServiceProvider extends ServiceProvider
             return;
         }
 
-        $configFile = $directory.DIRECTORY_SEPARATOR.'config.php';
-
-        if (! File::exists($configFile)) {
-            return;
+        foreach (File::allFiles($directory) as $file) {
+            $key = $file->getFilenameWithoutExtension();
+            $path = $file->getPathname();
+            
+            // Manually merge or set to ensure it works
+            $config = config($key, []);
+            $newConfig = require $path;
+            
+            if (is_array($config) && is_array($newConfig)) {
+                config()->set($key, array_replace_recursive($config, $newConfig));
+            } else {
+                config()->set($key, $newConfig);
+            }
         }
-
-        $this->mergeConfigFrom($configFile, Str::kebab($module));
     }
+
 }

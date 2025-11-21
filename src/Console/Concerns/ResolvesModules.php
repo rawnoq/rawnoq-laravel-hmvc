@@ -1,11 +1,11 @@
 <?php
 
-namespace Rawnoq\LaravelHMVC\Console\Concerns;
+namespace Rawnoq\HMVC\Console\Concerns;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Rawnoq\LaravelHMVC\Support\ModuleManager;
+use Rawnoq\HMVC\Support\ModuleManager;
 
 trait ResolvesModules
 {

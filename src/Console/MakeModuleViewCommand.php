@@ -1,10 +1,10 @@
 <?php
 
-namespace Rawnoq\LaravelHMVC\Console;
+namespace Rawnoq\HMVC\Console;
 
 use Illuminate\Foundation\Console\ViewMakeCommand;
 use Illuminate\Support\Str;
-use Rawnoq\LaravelHMVC\Console\Concerns\ResolvesModules;
+use Rawnoq\HMVC\Console\Concerns\ResolvesModules;
 use Symfony\Component\Console\Input\InputOption;
 
 class MakeModuleViewCommand extends ViewMakeCommand

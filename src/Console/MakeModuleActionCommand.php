@@ -2,30 +2,41 @@
 
 namespace Rawnoq\HMVC\Console;
 
-use Illuminate\Foundation\Console\PolicyMakeCommand;
+use Illuminate\Foundation\Console\ClassMakeCommand;
 use Illuminate\Support\Str;
 use Rawnoq\HMVC\Console\Concerns\ResolvesModules;
 use Symfony\Component\Console\Input\InputOption;
 
-class MakeModulePolicyCommand extends PolicyMakeCommand
+class MakeModuleActionCommand extends ClassMakeCommand
 {
     use ResolvesModules;
 
+    /**
+     * The console command name.
+     *
+     * @var string
+     */
+    protected $name = 'make:action';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Create a new action class';
+
     protected ?string $moduleName = null;
 
-    protected ?string $rawModuleOption = null;
-
-    public function handle()
+    public function handle(): int
     {
         $moduleOption = $this->option('module');
 
         if ($moduleOption) {
-            $this->rawModuleOption = $moduleOption;
             $this->moduleName = $this->normalizeModule($moduleOption);
 
             if (! $this->moduleExists($this->moduleName)) {
                 $this->components->error("Module [{$this->moduleName}] does not exist.");
-                $this->resetModuleState();
+                $this->moduleName = null;
 
                 return self::FAILURE;
             }
@@ -33,15 +44,14 @@ class MakeModulePolicyCommand extends PolicyMakeCommand
 
         $result = parent::handle();
 
-        $this->resetModuleState();
+        $this->moduleName = null;
 
         return is_int($result) ? $result : self::SUCCESS;
     }
 
-    protected function resetModuleState(): void
+    protected function getDefaultNamespace($rootNamespace)
     {
-        $this->moduleName = null;
-        $this->rawModuleOption = null;
+        return rtrim($rootNamespace, '\\').'\\Actions';
     }
 
     protected function rootNamespace()
@@ -53,20 +63,11 @@ class MakeModulePolicyCommand extends PolicyMakeCommand
         return parent::rootNamespace();
     }
 
-    protected function getDefaultNamespace($rootNamespace)
-    {
-        if ($this->moduleName) {
-            return rtrim($rootNamespace, '\\').'\\Policies';
-        }
-
-        return parent::getDefaultNamespace($rootNamespace);
-    }
-
     protected function getPath($name)
     {
         if ($this->moduleName) {
             $parentPath = parent::getPath($name);
-            $appPath = app_path().DIRECTORY_SEPARATOR;
+            $appPath = base_path('app').DIRECTORY_SEPARATOR;
             $relative = Str::after($parentPath, $appPath);
 
             if ($relative === $parentPath) {
@@ -75,11 +76,11 @@ class MakeModulePolicyCommand extends PolicyMakeCommand
 
             $relative = ltrim($relative, DIRECTORY_SEPARATOR);
 
-            if (Str::startsWith($relative, 'Policies'.DIRECTORY_SEPARATOR)) {
-                $relative = Str::after($relative, 'Policies'.DIRECTORY_SEPARATOR);
+            if (Str::startsWith($relative, 'Actions'.DIRECTORY_SEPARATOR)) {
+                $relative = Str::after($relative, 'Actions'.DIRECTORY_SEPARATOR);
             }
 
-            $primary = str_replace('/', DIRECTORY_SEPARATOR, $this->modulePrimaryDirectory($this->moduleName, 'policies', 'Policies'));
+            $primary = str_replace('/', DIRECTORY_SEPARATOR, $this->modulePrimaryDirectory($this->moduleName, 'actions', 'App/Actions'));
 
             return $this->moduleBasePath($this->moduleName)
                 .DIRECTORY_SEPARATOR.$primary
@@ -92,7 +93,8 @@ class MakeModulePolicyCommand extends PolicyMakeCommand
     protected function getOptions()
     {
         return array_merge(parent::getOptions(), [
-            ['module', null, InputOption::VALUE_OPTIONAL, 'The module to create the policy in'],
+            ['module', null, InputOption::VALUE_OPTIONAL, 'The module to create the action in'],
         ]);
     }
 }
+

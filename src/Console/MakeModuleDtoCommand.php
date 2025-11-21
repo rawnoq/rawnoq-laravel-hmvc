@@ -2,16 +2,50 @@
 
 namespace Rawnoq\HMVC\Console;
 
-use Illuminate\Foundation\Console\InterfaceMakeCommand;
+use Illuminate\Foundation\Console\ClassMakeCommand;
 use Illuminate\Support\Str;
 use Rawnoq\HMVC\Console\Concerns\ResolvesModules;
 use Symfony\Component\Console\Input\InputOption;
 
-class MakeModuleInterfaceCommand extends InterfaceMakeCommand
+class MakeModuleDtoCommand extends ClassMakeCommand
 {
     use ResolvesModules;
 
     protected ?string $moduleName = null;
+
+    protected $name = 'make:dto';
+
+    protected $description = 'Create a new DTO class';
+
+    protected $type = 'DTO';
+
+    protected function getStub()
+    {
+        $stubPath = __DIR__.'/../../stubs/module/dto.stub';
+
+        return file_exists($stubPath)
+            ? $stubPath
+            : $this->resolveStubPath('/stubs/dto.stub');
+    }
+
+    protected function resolveStubPath($stub)
+    {
+        return file_exists($customPath = $this->laravel->basePath(trim($stub, '/')))
+            ? $customPath
+            : __DIR__.'/../../stubs/module/dto.stub';
+    }
+
+    protected function buildClass($name)
+    {
+        $stub = parent::buildClass($name);
+
+        // Always use BaseDto from the package
+        $baseDtoNamespace = 'Rawnoq\\HMVC\\DTOs\\BaseDto';
+
+        $stub = str_replace('{{ baseDtoNamespace }}', $baseDtoNamespace, $stub);
+
+        return $stub;
+    }
 
     public function handle(): int
     {
@@ -47,20 +81,15 @@ class MakeModuleInterfaceCommand extends InterfaceMakeCommand
     protected function getDefaultNamespace($rootNamespace)
     {
         if ($this->moduleName) {
-            $interfacesPath = $this->moduleBasePath($this->moduleName).DIRECTORY_SEPARATOR.'App'.DIRECTORY_SEPARATOR.'Interfaces';
-
-            return match (true) {
-                is_dir($interfacesPath) => rtrim($rootNamespace, '\\').'\\Interfaces',
-                default => rtrim($rootNamespace, '\\').'\\Interfaces',
-            };
+            return rtrim($rootNamespace, '\\').'\\DTOs';
         }
 
-        // Handle non-module case - check for app/Interfaces
-        $interfacesPath = base_path('app').DIRECTORY_SEPARATOR.'Interfaces';
+        // Handle non-module case - check for app/DTOs
+        $dtosPath = base_path('app').DIRECTORY_SEPARATOR.'DTOs';
 
         return match (true) {
-            is_dir($interfacesPath) => rtrim($rootNamespace, '\\').'\\Interfaces',
-            default => rtrim($rootNamespace, '\\').'\\Interfaces',
+            is_dir($dtosPath) => rtrim($rootNamespace, '\\').'\\DTOs',
+            default => rtrim($rootNamespace, '\\').'\\DTOs',
         };
     }
 
@@ -77,16 +106,16 @@ class MakeModuleInterfaceCommand extends InterfaceMakeCommand
 
             $relative = ltrim($relative, DIRECTORY_SEPARATOR);
 
-            // Remove Interfaces from the beginning of relative path if present
-            if (Str::startsWith($relative, 'Interfaces'.DIRECTORY_SEPARATOR)) {
-                $relative = Str::after($relative, 'Interfaces'.DIRECTORY_SEPARATOR);
+            // Remove DTOs from the beginning of relative path if present
+            if (Str::startsWith($relative, 'DTOs'.DIRECTORY_SEPARATOR)) {
+                $relative = Str::after($relative, 'DTOs'.DIRECTORY_SEPARATOR);
             }
 
-            $interfacesPath = $this->moduleBasePath($this->moduleName).DIRECTORY_SEPARATOR.'App'.DIRECTORY_SEPARATOR.'Interfaces';
+            $dtosPath = $this->moduleBasePath($this->moduleName).DIRECTORY_SEPARATOR.'App'.DIRECTORY_SEPARATOR.'DTOs';
 
             $primary = match (true) {
-                is_dir($interfacesPath) => 'App'.DIRECTORY_SEPARATOR.'Interfaces',
-                default => 'App'.DIRECTORY_SEPARATOR.'Interfaces',
+                is_dir($dtosPath) => 'App'.DIRECTORY_SEPARATOR.'DTOs',
+                default => 'App'.DIRECTORY_SEPARATOR.'DTOs',
             };
 
             return $this->moduleBasePath($this->moduleName)
@@ -94,7 +123,7 @@ class MakeModuleInterfaceCommand extends InterfaceMakeCommand
                 .DIRECTORY_SEPARATOR.$relative;
         }
 
-        // Handle non-module case - check for app/Interfaces
+        // Handle non-module case - check for app/DTOs
         $parentPath = parent::getPath($name);
         $appPath = base_path('app').DIRECTORY_SEPARATOR;
         $relative = Str::after($parentPath, $appPath);
@@ -105,16 +134,16 @@ class MakeModuleInterfaceCommand extends InterfaceMakeCommand
 
         $relative = ltrim($relative, DIRECTORY_SEPARATOR);
 
-        // Remove Interfaces from the beginning of relative path if present
-        if (Str::startsWith($relative, 'Interfaces'.DIRECTORY_SEPARATOR)) {
-            $relative = Str::after($relative, 'Interfaces'.DIRECTORY_SEPARATOR);
+        // Remove DTOs from the beginning of relative path if present
+        if (Str::startsWith($relative, 'DTOs'.DIRECTORY_SEPARATOR)) {
+            $relative = Str::after($relative, 'DTOs'.DIRECTORY_SEPARATOR);
         }
 
-        $interfacesPath = base_path('app').DIRECTORY_SEPARATOR.'Interfaces';
+        $dtosPath = base_path('app').DIRECTORY_SEPARATOR.'DTOs';
 
         $primary = match (true) {
-            is_dir($interfacesPath) => 'Interfaces',
-            default => 'Interfaces',
+            is_dir($dtosPath) => 'DTOs',
+            default => 'DTOs',
         };
 
         return base_path('app')
@@ -125,7 +154,8 @@ class MakeModuleInterfaceCommand extends InterfaceMakeCommand
     protected function getOptions()
     {
         return array_merge(parent::getOptions(), [
-            ['module', null, InputOption::VALUE_OPTIONAL, 'The module to create the interface in'],
+            ['module', null, InputOption::VALUE_OPTIONAL, 'The module to create the DTO in'],
         ]);
     }
 }
+

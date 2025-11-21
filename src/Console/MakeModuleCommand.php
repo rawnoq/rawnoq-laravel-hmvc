@@ -1,8 +1,8 @@
 <?php
 
-namespace Rawnoq\LaravelHMVC\Console;
+namespace Rawnoq\HMVC\Console;
 
-use Rawnoq\LaravelHMVC\Support\ModuleManager;
+use Rawnoq\HMVC\Support\ModuleManager;
 
 class MakeModuleCommand extends ModuleMakeCommand
 {

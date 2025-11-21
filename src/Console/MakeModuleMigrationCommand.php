@@ -1,12 +1,12 @@
 <?php
 
-namespace Rawnoq\LaravelHMVC\Console;
+namespace Rawnoq\HMVC\Console;
 
 use Illuminate\Database\Console\Migrations\MigrateMakeCommand;
 use Illuminate\Database\Migrations\MigrationCreator;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Facades\File;
-use Rawnoq\LaravelHMVC\Console\Concerns\ResolvesModules;
+use Rawnoq\HMVC\Console\Concerns\ResolvesModules;
 
 class MakeModuleMigrationCommand extends MigrateMakeCommand
 {

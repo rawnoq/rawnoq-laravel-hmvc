@@ -1,0 +1,33 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ baseDtoNamespace }};
+
+final readonly class {{ class }} extends BaseDto
+{
+    public function __construct(
+        public string $name,
+        public string $email,
+        public ?string $address = null,
+    ) {}
+
+    public static function fromArray(array $data): static
+    {
+        return new static(
+            name: $data['name'],
+            email: $data['email'],
+            address: $data['address'] ?? null,
+        );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'email' => $this->email,
+            'address' => $this->address,
+        ];
+    }
+}
+

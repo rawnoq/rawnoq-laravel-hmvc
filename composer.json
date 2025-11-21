@@ -31,18 +31,18 @@
     },
     "autoload": {
         "psr-4": {
-            "Rawnoq\\LaravelHMVC\\": "src/"
+            "Rawnoq\\HMVC\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Rawnoq\\LaravelHMVC\\Tests\\": "tests/"
+            "Rawnoq\\HMVC\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Rawnoq\\LaravelHMVC\\Providers\\HMVCServiceProvider"
+                "Rawnoq\\HMVC\\Providers\\HMVCServiceProvider"
             ]
         }
     },

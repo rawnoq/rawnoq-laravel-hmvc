@@ -1,9 +1,9 @@
 <?php
 
-namespace Rawnoq\LaravelHMVC\Console;
+namespace Rawnoq\HMVC\Console;
 
 use Illuminate\Console\Command;
-use Rawnoq\LaravelHMVC\Support\ModuleManager;
+use Rawnoq\HMVC\Support\ModuleManager;
 
 class ModuleEnableCommand extends Command
 {
