@@ -1,0 +1,15 @@
+<?php
+
+namespace {{ namespace }};
+
+interface {{ class }}
+{
+    /**
+     * Execute the strategy.
+     *
+     * @param  mixed  $data
+     * @return mixed
+     */
+    public function execute($data = null);
+}
+

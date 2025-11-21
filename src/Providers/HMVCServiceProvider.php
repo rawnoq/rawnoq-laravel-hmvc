@@ -42,6 +42,9 @@ use Rawnoq\HMVC\Console\MakeModuleRuleCommand;
 use Rawnoq\HMVC\Console\MakeModuleScopeCommand;
 use Rawnoq\HMVC\Console\MakeModuleSeederCommand;
 use Rawnoq\HMVC\Console\MakeModuleServiceCommand;
+use Rawnoq\HMVC\Console\MakeModuleStrategyCommand;
+use Rawnoq\HMVC\Console\MakeModuleStrategyContextCommand;
+use Rawnoq\HMVC\Console\MakeModuleStrategyInterfaceCommand;
 use Rawnoq\HMVC\Console\MakeModuleTestCommand;
 use Rawnoq\HMVC\Console\MakeModuleTraitCommand;
 use Rawnoq\HMVC\Console\MakeModuleViewCommand;
@@ -105,6 +108,9 @@ class HMVCServiceProvider extends ServiceProvider
                 MakeModuleInterfaceCommand::class,
                 MakeModuleTraitCommand::class,
                 MakeModuleDtoCommand::class,
+                MakeModuleStrategyInterfaceCommand::class,
+                MakeModuleStrategyCommand::class,
+                MakeModuleStrategyContextCommand::class,
                 MakeModuleConfigCommand::class,
                 MakeModuleProviderCommand::class,
                 MakeModuleJobMiddlewareCommand::class,

@@ -41,6 +41,7 @@ return [
         'interfaces' => ['App/Interfaces'],
         'traits' => ['App/Traits'],
         'dtos' => ['App/DTOs'],
+        'strategies' => ['App/Strategies'],
         'job-middleware' => ['App/Jobs/Middleware'],
         'services' => ['App/Services'],
         'repositories' => ['App/Repositories'],
