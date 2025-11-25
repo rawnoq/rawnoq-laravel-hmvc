@@ -240,6 +240,7 @@ class HMVCServiceProvider extends ServiceProvider
         }
 
         $this->loadTranslationsFrom($directory, Str::kebab($module));
+        $this->mergeModuleTranslationsIntoApplication($directory);
     }
 
     protected function bootMigrations(ModuleManager $modules, string $module): void
@@ -269,6 +270,30 @@ class HMVCServiceProvider extends ServiceProvider
                 config()->set($key, array_replace_recursive($config, $newConfig));
             } else {
                 config()->set($key, $newConfig);
+            }
+        }
+    }
+
+    protected function mergeModuleTranslationsIntoApplication(string $directory): void
+    {
+        $translator = $this->app['translator'];
+
+        foreach (File::directories($directory) as $localePath) {
+            $locale = basename($localePath);
+
+            foreach (File::files($localePath) as $file) {
+                if ($file->getExtension() !== 'php') {
+                    continue;
+                }
+
+                $group = $file->getFilenameWithoutExtension();
+                $translations = File::getRequire($file->getPathname());
+
+                if (! is_array($translations) || empty($translations)) {
+                    continue;
+                }
+
+                $translator->addLines(Arr::dot([$group => $translations]), $locale);
             }
         }
     }
