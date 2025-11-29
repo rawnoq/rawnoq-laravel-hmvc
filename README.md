@@ -419,6 +419,7 @@ The package provides two ways to register class aliases:
 
 **1. Using the Helper Function (Recommended):**
 
+**Single alias:**
 ```php
 <?php
 
@@ -434,14 +435,51 @@ class ServiceProvider extends ServiceProvider
             'Modules\Authentication\App\Models\BaseUser',
             config('authentication_dependencies.models.user')
         );
-
-        register_class_alias(
-            'Modules\Authentication\App\Http\Resources\UserResource',
-            config('authentication_dependencies.resources.user')
-        );
     }
 }
 ```
+
+**Multiple aliases at once (snake_case):**
+```php
+<?php
+
+namespace Modules\Authentication\App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class ServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        register_class_aliases([
+            'Modules\Authentication\App\Models\BaseUser' => config('authentication_dependencies.models.user'),
+            'Modules\Authentication\App\Http\Resources\UserResource' => config('authentication_dependencies.resources.user'),
+        ]);
+    }
+}
+```
+
+**Multiple aliases at once (camelCase):**
+```php
+<?php
+
+namespace Modules\Authentication\App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class ServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        registerClassAliases([
+            'Modules\Authentication\App\Models\BaseUser' => config('authentication_dependencies.models.user'),
+            'Modules\Authentication\App\Http\Resources\UserResource' => config('authentication_dependencies.resources.user'),
+        ]);
+    }
+}
+```
+
+**Note:** Both `register_class_aliases()` (snake_case) and `registerClassAliases()` (camelCase) are available. Use whichever naming convention you prefer.
 
 **2. Using the Trait:**
 

@@ -264,11 +264,11 @@ class HMVCServiceProvider extends ServiceProvider
         foreach (File::allFiles($directory) as $file) {
             $key = $file->getFilenameWithoutExtension();
             $path = $file->getPathname();
-            
+
             // Manually merge or set to ensure it works
             $config = config($key, []);
             $newConfig = require $path;
-            
+
             if (is_array($config) && is_array($newConfig)) {
                 config()->set($key, array_replace_recursive($config, $newConfig));
             } else {
