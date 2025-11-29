@@ -413,6 +413,66 @@ class ServiceProvider extends ServiceProvider
 }
 ```
 
+#### Registering Class Aliases
+
+The package provides two ways to register class aliases:
+
+**1. Using the Helper Function (Recommended):**
+
+```php
+<?php
+
+namespace Modules\Authentication\App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class ServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        register_class_alias(
+            'Modules\Authentication\App\Models\BaseUser',
+            config('authentication_dependencies.models.user')
+        );
+
+        register_class_alias(
+            'Modules\Authentication\App\Http\Resources\UserResource',
+            config('authentication_dependencies.resources.user')
+        );
+    }
+}
+```
+
+**2. Using the Trait:**
+
+```php
+<?php
+
+namespace Modules\Authentication\App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+use Rawnoq\HMVC\Support\RegistersClassAliases;
+
+class ServiceProvider extends ServiceProvider
+{
+    use RegistersClassAliases;
+
+    public function register(): void
+    {
+        $this->registerClassAlias(
+            'Modules\Authentication\App\Models\BaseUser',
+            config('authentication_dependencies.models.user')
+        );
+    }
+}
+```
+
+**Benefits:**
+- Allows modules to reference classes by a consistent name
+- Actual implementation can be swapped via configuration
+- Prevents duplicate alias registration
+- Type-safe and maintainable
+
 ### Module Routes
 
 #### Web Routes (`routes/web.php`)

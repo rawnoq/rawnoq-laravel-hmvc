@@ -59,6 +59,9 @@ class HMVCServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        // Load helper functions
+        require_once __DIR__.'/../Support/helpers.php';
+
         $this->mergeConfigFrom(__DIR__.'/../../config/hmvc.php', 'hmvc');
 
         $this->app->singleton(ModuleManager::class, function ($app) {
