@@ -70,6 +70,9 @@ class HMVCServiceProvider extends ServiceProvider
 
         $this->registerModuleAutoloading();
 
+        // Load module configs early so they're available in register() phase
+        $this->registerModuleConfigs($this->app->make(ModuleManager::class));
+
         $this->app->alias('migration.creator', MigrationCreator::class);
 
         if ($this->app->runningInConsole()) {
@@ -159,6 +162,14 @@ class HMVCServiceProvider extends ServiceProvider
         // Register PSR-4 autoloading for modules
         $loader = require base_path('vendor/autoload.php');
         $loader->setPsr4($namespace.'\\', $normalizedPath);
+    }
+
+    protected function registerModuleConfigs(ModuleManager $modules): void
+    {
+        foreach ($modules->enabled() as $module) {
+            $name = Arr::get($module, 'name');
+            $this->loadModuleConfig($modules, $name);
+        }
     }
 
     protected function registerModuleProviders(ModuleManager $modules): void
@@ -253,7 +264,7 @@ class HMVCServiceProvider extends ServiceProvider
         }
     }
 
-    protected function bootConfig(ModuleManager $modules, string $module): void
+    protected function loadModuleConfig(ModuleManager $modules, string $module): void
     {
         $directory = $modules->firstExistingDirectory($module, 'config');
 
@@ -265,16 +276,30 @@ class HMVCServiceProvider extends ServiceProvider
             $key = $file->getFilenameWithoutExtension();
             $path = $file->getPathname();
 
-            // Manually merge or set to ensure it works
-            $config = config($key, []);
-            $newConfig = require $path;
+            // Check if config is already loaded (from register phase)
+            $existingConfig = config($key);
 
-            if (is_array($config) && is_array($newConfig)) {
-                config()->set($key, array_replace_recursive($config, $newConfig));
+            // If config exists and is not empty, it was already loaded in register phase
+            // We still merge to ensure any runtime changes are applied
+            if ($existingConfig !== null && $existingConfig !== []) {
+                $newConfig = require $path;
+
+                if (is_array($existingConfig) && is_array($newConfig)) {
+                    config()->set($key, array_replace_recursive($existingConfig, $newConfig));
+                }
             } else {
+                // First time loading - set directly
+                $newConfig = require $path;
                 config()->set($key, $newConfig);
             }
         }
+    }
+
+    protected function bootConfig(ModuleManager $modules, string $module): void
+    {
+        // Config is already loaded in register() phase, but we keep this for backwards compatibility
+        // and to ensure config is available even if register() wasn't called
+        $this->loadModuleConfig($modules, $module);
     }
 
     protected function mergeModuleTranslationsIntoApplication(string $directory): void
